@@ -21,6 +21,17 @@ async def quiz(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     )
     await update.message.reply_text(f"Как зовут YE? (Осталось попыток: {context.user_data['attempts']})", reply_markup=reply_markup)
 
+async def quiz1(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    context.user_data['attempts'] = 1
+    keyboard = [
+        [KeyboardButton("The College Dropout"), KeyboardButton("Late Registration"), KeyboardButton('Graduation'), KeyboardButton('808s & Heartbreak')]
+    ]
+    reply_markup = ReplyKeyboardMarkup(
+        keyboard,
+        resize_keyboard=True
+    )
+    await update.message.reply_text(f"Как называется первый альбом Kanye West? (Осталось попыток: {context.user_data['attempts']})", reply_markup=reply_markup)
+
 async def opros(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     logging.info("Received /opros command")
     keyboard = [
@@ -90,9 +101,22 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
             context.user_data['attempts'] = 2  # Сбрасываем счетчик
             
     elif text == "Kanye West":
-        await update.message.reply_text("Правильно! Ты достоин быть фанатом YE")
+        await update.message.reply_text("Правильно! Но есть еще вопросы")
         context.user_data['attempts'] = 2  # Сбрасываем счетчик
-            
+        await quiz1(update, context)
+    elif text == "The College Dropout" or text == "808s & Heartbreak" or text == "Graduation":
+        context.user_data['attempts'] -= 1
+        if context.user_data['attempts'] > 0:
+            await update.message.reply_text(f"Нет, даю тебе еще попытку. Осталось попыток: {context.user_data['attempts']}")
+            await quiz1(update, context)
+        else:
+            await update.message.reply_text("Попытки закончились. Правильный ответ: Late Registration")
+            context.user_data['attempts'] = 2
+    elif text == "Late Registration":
+        await update.message.reply_text("Правильно! Но есть еще вопросы")
+        context.user_data['attempts'] = 2
+        
+        
     elif text == "НЕТ⭕":
         await update.message.reply_text("Иди нахуй")
         context.user_data['choice_made'] = 'no'
@@ -117,6 +141,7 @@ def main():
     application.add_handler(CommandHandler('reset', reset))
     application.add_handler(CommandHandler('orpos', opros))
     application.add_handler(CommandHandler('quiz', quiz))
+    application.add_handler(CommandHandler('quiz1', quiz1))
     logging.info("Running polling")
     application.run_polling()
 
