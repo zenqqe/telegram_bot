@@ -105,7 +105,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         # Если выбор не сделан, просим сделать выбор
         await update.message.reply_text("Сначала выбери ДА✅ или НЕТ⭕")
 
-print('Bot started')
+
 
 def main():
     logging.info("Starting bot")
