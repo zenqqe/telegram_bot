@@ -107,7 +107,6 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
 
  
-print('Bot started')
 
 def main():
     logging.info("Starting bot")
